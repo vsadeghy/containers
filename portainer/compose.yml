@@ -1,0 +1,21 @@
+services:
+  portainer:
+    image: portainer/portainer-ce:lts
+    container_name: portainer
+    restart: always
+    security_opt:
+      - label=disable
+    ports:
+      - 9443:9443
+    volumes:
+      - /run/podman/podman.sock:/var/run/docker.sock
+      - portainer:/data
+    networks:
+      - caddy
+
+volumes:
+  portainer:
+
+networks:
+  caddy:
+    external: true
