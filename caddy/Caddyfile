@@ -1,0 +1,42 @@
+*.vahidss.xyz {
+	tls {
+		dns cloudflare {env.CF_API_TOKEN}
+		propagation_delay 2ms
+		resolvers 1.1.1.1
+	}
+
+	@portainer host portainer.vahidss.xyz
+	handle @portainer {
+		reverse_proxy https://portainer:9443 {
+			transport http {
+				tls
+				tls_insecure_skip_verify
+			}
+		}
+	}
+
+	@xray host xray.vahidss.xyz
+	handle @xray {
+		@ws {
+			header Connection *Upgrade*
+			header Upgrade websocket
+		}
+		reverse_proxy @ws xray:1080
+		reverse_proxy xray:1081
+	}
+
+	@chart host chart.vahidss.xyz
+	handle @chart {
+		respond "service not available right now"
+		reverse_proxy 192.168.100.19:3000
+	}
+	@chartback host chartback.vahidss.xyz
+	handle @chartback {
+		reverse_proxy 192.168.100.19:4000
+	}
+
+	handle {
+		respond "404"
+	}
+}
+#vim:se ts=4 sw=4 et:

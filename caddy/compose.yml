@@ -1,0 +1,28 @@
+services:
+  caddy:
+    build:
+      context: .
+    container_name: caddy
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - CLOUDFLARE_EMAIL=${CF_EMAIL}
+      - CLOUDFLARE_API_TOKEN=${CF_API_TOKEN}
+      - ACME_AGREE=true
+    ports:
+      - 443:443
+    volumes:
+      - caddy-config:/config
+      - caddy-data:/data
+      - ./Caddyfile:/etc/caddy/Caddyfile
+    networks:
+      - caddy
+
+networks:
+  caddy:
+    external: true
+
+volumes:
+  caddy-config:
+  caddy-data:
